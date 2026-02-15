@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.nibm.souschef.algorithm.RecipeParser;
+import com.nibm.souschef.algorithm.ScalingHelper;
 import com.nibm.souschef.model.RecipeDLL;
 import com.nibm.souschef.model.StepNode;
 import android.widget.*;
@@ -34,13 +35,20 @@ public class MainActivity extends AppCompatActivity {
 
             String result = "";
 
+            double factor = 2; // example scaling factor
+
             while (node != null) {
-                result += node.instruction + "\n";
+
+                String scaled = ScalingHelper.scaleStep(node.instruction, factor);
+
+                result += scaled + "\n";
+
                 node = node.next;
             }
 
             output.setText(result);
 
         });
+
     }
 }
