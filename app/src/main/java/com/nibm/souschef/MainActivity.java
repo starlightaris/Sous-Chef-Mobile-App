@@ -2,23 +2,45 @@ package com.nibm.souschef;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.nibm.souschef.algorithm.RecipeParser;
+import com.nibm.souschef.model.RecipeDLL;
+import com.nibm.souschef.model.StepNode;
+import android.widget.*;
 
 public class MainActivity extends AppCompatActivity {
+
+    EditText inputRecipe;
+    Button btnParse;
+    TextView output;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        inputRecipe = findViewById(R.id.inputRecipe);
+        btnParse = findViewById(R.id.btnParse);
+        output = findViewById(R.id.output);
+
+        btnParse.setOnClickListener(v -> {
+
+            String rawText = inputRecipe.getText().toString();
+
+            RecipeDLL dll = RecipeParser.parseRecipe(rawText);
+
+            StepNode node = dll.getHead();
+
+            String result = "";
+
+            while (node != null) {
+                result += node.instruction + "\n";
+                node = node.next;
+            }
+
+            output.setText(result);
+
         });
     }
 }
