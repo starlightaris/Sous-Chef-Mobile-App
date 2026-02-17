@@ -8,7 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.nibm.souschef.MainActivity;
 import com.nibm.souschef.R;
-import com.nibm.souschef.model.*;
+import com.nibm.souschef.model.RecipeData;
+import com.nibm.souschef.model.RecipeRepository;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,11 +21,9 @@ public class RecipeListActivity extends AppCompatActivity {
 
     ListView listView;
 
-    ArrayList<RecipeData> recipeList =
-            new ArrayList<>();
+    ArrayList<RecipeData> recipeList = new ArrayList<>();
 
-    ArrayList<String> titleList =
-            new ArrayList<>();
+    ArrayList<String> titleList = new ArrayList<>();
 
 
     @Override
@@ -32,99 +31,70 @@ public class RecipeListActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        setContentView(
-                R.layout.activity_recipe_list);
+        setContentView(R.layout.activity_recipe_list);
 
-        listView =
-                findViewById(R.id.listView);
+        listView = findViewById(R.id.listView);
 
         loadRecipes();
 
-        ArrayAdapter adapter =
-                new ArrayAdapter(
-                        this,
-                        android.R.layout.simple_list_item_1,
-                        titleList);
+
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titleList);
 
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
 
-        listView.setOnItemClickListener(
-                (parent, view, position, id) -> {
+        listView.setOnItemClickListener((parent, view, position, id) -> {
 
-                    RecipeData data =
-                            recipeList.get(position);
+            RecipeRepository.selectedRecipe = recipeList.get(position);
 
-                    RecipeRepository.selectedRecipe =
-                            data;
+            startActivity(
+                    new Intent(this, MainActivity.class));
 
-                    startActivity(
-                            new Intent(
-                                    this,
-                                    MainActivity.class));
-
-                });
+        });
 
     }
-
-
 
     private void loadRecipes() {
 
         try {
 
-            FileInputStream fis =
-                    openFileInput("recipes.json");
-
-            byte[] buffer =
-                    new byte[fis.available()];
-
+            FileInputStream fis = openFileInput("recipes.json");
+            byte[] buffer = new byte[fis.available()];
             fis.read(buffer);
-
             fis.close();
 
+            JSONArray array = new JSONArray(new String(buffer));
 
-            JSONArray array =
-                    new JSONArray(
-                            new String(buffer));
+            for (int i = 0; i < array.length(); i++) {
 
+                JSONObject obj = array.getJSONObject(i);
 
-            for(int i=0;i<array.length();i++)
-            {
+                String title = obj.getString("title");
+                String recipe = obj.getString("recipe");
 
-                JSONObject obj =
-                        array.getJSONObject(i);
+                double multiplier = 1.0;
 
-                RecipeData data =
-                        new RecipeData(
+                try {
+                    multiplier = obj.getDouble("multiplier");
+                }
+                catch(Exception e){ }
 
-                                obj.getString("title"),
+                boolean metric = obj.getBoolean("metric");
 
-                                obj.getString("recipe"),
-
-                                obj.getDouble("multiplier"),
-
-                                obj.getBoolean("metric")
-
-                        );
-
-
+                RecipeData data = new RecipeData(
+                                title,
+                                recipe,
+                                multiplier,
+                                metric);
                 recipeList.add(data);
-
-                titleList.add(data.title);
-
+                titleList.add(title);
             }
-
         }
-
         catch(Exception e){
-
-            Toast.makeText(this,
-                    "No recipes found",
+            Toast.makeText(this, "Error loading",
                     Toast.LENGTH_SHORT).show();
-
         }
-
     }
-
 }

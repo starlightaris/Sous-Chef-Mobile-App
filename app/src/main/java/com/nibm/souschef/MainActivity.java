@@ -53,6 +53,25 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        if(RecipeRepository.selectedRecipe != null)
+        {
+
+            RecipeData data =
+                    RecipeRepository.selectedRecipe;
+
+            etTitle.setText(data.title);
+
+            etRecipe.setText(data.recipe);
+
+            etMultiplier.setText(
+                    String.valueOf(data.multiplier));
+
+            switchMetric.setChecked(
+                    data.metric);
+
+        }
+
+
     }
 
     // START COOKING
@@ -128,11 +147,9 @@ public class MainActivity extends AppCompatActivity {
 
         try {
 
-            String title =
-                    etTitle.getText().toString();
+            String title = etTitle.getText().toString();
 
-            String recipe =
-                    etRecipe.getText().toString();
+            String recipe = etRecipe.getText().toString();
 
             double multiplier = 1.0;
 
@@ -144,11 +161,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            boolean metric =
-                    switchMetric.isChecked();
+            boolean metric = switchMetric.isChecked();
 
-            JSONObject newRecipe =
-                    new JSONObject();
+            JSONObject newRecipe = new JSONObject();
 
             newRecipe.put("title", title);
             newRecipe.put("recipe", recipe);
@@ -178,16 +193,13 @@ public class MainActivity extends AppCompatActivity {
 
             catch (Exception e) {
 
-                array =
-                        new JSONArray();
+                array = new JSONArray();
 
             }
 
             array.put(newRecipe);
 
-            FileOutputStream fos =
-                    openFileOutput(
-                            "recipes.json",
+            FileOutputStream fos = openFileOutput("recipes.json",
                             MODE_PRIVATE);
 
             fos.write(
@@ -209,5 +221,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
 
 }
