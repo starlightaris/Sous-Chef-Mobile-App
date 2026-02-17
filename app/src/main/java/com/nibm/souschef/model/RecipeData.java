@@ -2,7 +2,7 @@ package com.nibm.souschef.model;
 
 public class RecipeData {
     public String title;
-    public String rawText;
+    public String recipe;
     public double multiplier;
     public boolean metricToggle;
 

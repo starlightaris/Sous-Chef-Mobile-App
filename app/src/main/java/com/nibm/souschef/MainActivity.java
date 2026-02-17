@@ -6,11 +6,12 @@ import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.nibm.souschef.algorithm.ConversionHelper;
 import com.nibm.souschef.algorithm.RecipeParser;
 import com.nibm.souschef.algorithm.ScalingHelper;
-import com.nibm.souschef.algorithm.ConversionHelper;
 import com.nibm.souschef.model.*;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
@@ -38,100 +39,175 @@ public class MainActivity extends AppCompatActivity {
         btnLoad = findViewById(R.id.btnLoad);
 
         btnStart.setOnClickListener(v -> startCooking());
+
         btnSave.setOnClickListener(v -> saveRecipe());
-        btnLoad.setOnClickListener(v -> loadRecipe());
+
+        // LOAD BUTTON OPENS RECIPE LIST SCREEN
+        btnLoad.setOnClickListener(v -> {
+
+            Intent intent =
+                    new Intent(MainActivity.this,
+                            com.nibm.souschef.ui.RecipeListActivity.class);
+
+            startActivity(intent);
+
+        });
+
     }
 
+    // START COOKING
     private void startCooking() {
 
-        String title = etTitle.getText().toString();
         String rawText = etRecipe.getText().toString();
 
         if (rawText.isEmpty()) {
-            Toast.makeText(this, "Recipe cannot be empty", Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(this,
+                    "Recipe cannot be empty",
+                    Toast.LENGTH_SHORT).show();
+
             return;
         }
 
         double multiplier = 1.0;
-        if (!etMultiplier.getText().toString().isEmpty()) {
-            multiplier = Double.parseDouble(etMultiplier.getText().toString());
+
+        try {
+
+            if (!etMultiplier.getText().toString().isEmpty()) {
+
+                multiplier =
+                        Double.parseDouble(
+                                etMultiplier.getText().toString());
+
+            }
+
+        }
+
+        catch (Exception e){
+
+            multiplier = 1.0;
+
         }
 
         boolean metric = switchMetric.isChecked();
 
-        RecipeDLL dll = RecipeParser.parseRecipe(rawText);
+        RecipeDLL dll =
+                RecipeParser.parseRecipe(rawText);
 
         StepNode node = dll.getHead();
 
         while (node != null) {
 
             node.instruction =
-                    ScalingHelper.scaleStep(node.instruction, multiplier);
+                    ScalingHelper.scaleStep(
+                            node.instruction,
+                            multiplier);
 
             if (metric) {
+
                 node.instruction =
-                        ConversionHelper.convertGramsToOunces(node.instruction);
+                        ConversionHelper.convertGramsToOunces(
+                                node.instruction);
+
             }
 
             node = node.next;
+
         }
 
         RecipeRepository.recipeDLL = dll;
 
-        Intent intent = new Intent(MainActivity.this,
-                com.nibm.souschef.ui.NavigatorActivity.class);
+        startActivity(
+                new Intent(this,
+                        com.nibm.souschef.ui.NavigatorActivity.class));
 
-        startActivity(intent);
     }
 
+    // SAVE RECIPE TO JSON FILE
     private void saveRecipe() {
 
         try {
 
-            JSONObject json = new JSONObject();
+            String title =
+                    etTitle.getText().toString();
 
-            json.put("title", etTitle.getText().toString());
-            json.put("recipe", etRecipe.getText().toString());
-            json.put("multiplier", etMultiplier.getText().toString());
-            json.put("metric", switchMetric.isChecked());
+            String recipe =
+                    etRecipe.getText().toString();
+
+            double multiplier = 1.0;
+
+            if (!etMultiplier.getText().toString().isEmpty()) {
+
+                multiplier =
+                        Double.parseDouble(
+                                etMultiplier.getText().toString());
+
+            }
+
+            boolean metric =
+                    switchMetric.isChecked();
+
+            JSONObject newRecipe =
+                    new JSONObject();
+
+            newRecipe.put("title", title);
+            newRecipe.put("recipe", recipe);
+            newRecipe.put("multiplier", multiplier);
+            newRecipe.put("metric", metric);
+
+
+            JSONArray array;
+
+            try {
+
+                FileInputStream fis =
+                        openFileInput("recipes.json");
+
+                byte[] buffer =
+                        new byte[fis.available()];
+
+                fis.read(buffer);
+
+                fis.close();
+
+                array =
+                        new JSONArray(
+                                new String(buffer));
+
+            }
+
+            catch (Exception e) {
+
+                array =
+                        new JSONArray();
+
+            }
+
+            array.put(newRecipe);
 
             FileOutputStream fos =
-                    openFileOutput("recipe.json", MODE_PRIVATE);
+                    openFileOutput(
+                            "recipes.json",
+                            MODE_PRIVATE);
 
-            fos.write(json.toString().getBytes());
+            fos.write(
+                    array.toString().getBytes());
+
             fos.close();
 
-            Toast.makeText(this, "Recipe Saved", Toast.LENGTH_SHORT).show();
 
-        } catch (Exception e) {
+            Toast.makeText(this,
+                    "Recipe Saved",
+                    Toast.LENGTH_SHORT).show();
+
+        }
+
+        catch (Exception e){
+
             e.printStackTrace();
+
         }
+
     }
 
-    private void loadRecipe() {
-
-        try {
-
-            FileInputStream fis =
-                    openFileInput("recipe.json");
-
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-            fis.close();
-
-            String jsonString = new String(buffer);
-
-            JSONObject json = new JSONObject(jsonString);
-
-            etTitle.setText(json.getString("title"));
-            etRecipe.setText(json.getString("recipe"));
-            etMultiplier.setText(json.getString("multiplier"));
-            switchMetric.setChecked(json.getBoolean("metric"));
-
-            Toast.makeText(this, "Recipe Loaded", Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
-            Toast.makeText(this, "No saved recipe found", Toast.LENGTH_SHORT).show();
-        }
-    }
 }
