@@ -4,9 +4,9 @@ public class RecipeDLL {
     private StepNode head;
     private StepNode tail;
 
-    public void insertNode(String instruction) {
+    public void insertNode(String instruction, int duration) {
 
-        StepNode newNode = new StepNode(instruction);
+        StepNode newNode = new StepNode(instruction, duration);
 
         if (head == null) {
             head = tail = newNode;

@@ -5,6 +5,8 @@ import com.nibm.souschef.model.RecipeDLL;
 public class RecipeParser {
     public static RecipeDLL parseRecipe(String rawText) {
 
+        int time =0;
+
         RecipeDLL dll = new RecipeDLL();
 
         if (rawText == null || rawText.isEmpty())
@@ -18,7 +20,7 @@ public class RecipeParser {
             step = step.trim();
 
             if (!step.isEmpty()) {
-                dll.insertNode(step);
+                dll.insertNode(step, time);
             }
         }
 
