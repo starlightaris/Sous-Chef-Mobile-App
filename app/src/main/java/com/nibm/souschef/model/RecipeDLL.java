@@ -76,4 +76,20 @@ public class RecipeDLL {
     public StepNode getHead() {
         return head;
     }
+
+    public StepNode getTail() {
+        return tail;
+    }
+
+    public StepNode getCurrentNode() {
+        return currentNode;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public boolean isCurrentStepTimed() {
+        return currentNode != null && currentNode.timerSeconds > 0;
+    }
 }
