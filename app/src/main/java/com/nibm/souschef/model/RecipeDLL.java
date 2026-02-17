@@ -1,6 +1,5 @@
 package com.nibm.souschef.model;
 
-import android.util.Log;
 public class RecipeDLL {
     private StepNode head;
     private StepNode tail;
