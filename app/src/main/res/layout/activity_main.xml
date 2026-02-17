@@ -17,7 +17,7 @@
             android:hint="Recipe Title"
             android:textSize="18sp" />
 
-        <!-- Raw Recipe Input -->
+        <!-- Recipe Input -->
         <EditText
             android:id="@+id/etRecipe"
             android:layout_width="match_parent"
@@ -28,27 +28,82 @@
             android:padding="8dp"
             android:background="@android:drawable/edit_text" />
 
-        <!-- Serving Multiplier -->
-        <EditText
-            android:id="@+id/etMultiplier"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Serving Multiplier (e.g. 2)"
-            android:inputType="numberDecimal" />
-
-        <!-- Metric Toggle -->
-        <Switch
-            android:id="@+id/switchMetric"
+        <!-- Multiplier Label -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Convert to Ounces" />
+            android:text="Multiplier"
+            android:textStyle="bold"
+            android:paddingTop="12dp"/>
 
-        <!-- Buttons -->
+        <!-- Multiplier Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ToggleButton
+                android:id="@+id/btn1x"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="1x"
+                android:textOff="1x"/>
+
+            <ToggleButton
+                android:id="@+id/btn2x"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="2x"
+                android:textOff="2x"/>
+
+            <ToggleButton
+                android:id="@+id/btn3x"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="3x"
+                android:textOff="3x"/>
+        </LinearLayout>
+
+        <!-- Unit System -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Measurement System"
+            android:textStyle="bold"
+            android:paddingTop="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ToggleButton
+                android:id="@+id/btnUK"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="UK"
+                android:textOff="UK"/>
+
+            <ToggleButton
+                android:id="@+id/btnUS"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="US"
+                android:textOff="US"/>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
         <Button
             android:id="@+id/btnStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Start Cooking" />
+            android:text="Start Cooking"
+            android:layout_marginTop="16dp"/>
 
         <Button
             android:id="@+id/btnSave"
