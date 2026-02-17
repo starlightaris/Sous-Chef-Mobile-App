@@ -1,160 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#F5F5F5"
-    tools:ignore="HardcodedText,Autofill,TextFields,ButtonStyle">
+    android:layout_height="match_parent">
 
-    <!-- HEADER -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SOUS-CHEF KDS"
-        android:textAlignment="center"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- INPUT ROW (Fixed Alignment) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Instruction takes all available space -->
+        <!-- Recipe Title -->
         <EditText
-            android:id="@+id/inputStep"
-            android:layout_width="0dp"
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="text"
-            android:hint="Instruction"
-            android:background="@android:drawable/edit_text"
-            android:padding="10dp"
-            android:layout_marginEnd="8dp"/>
+            android:hint="Recipe Title"
+            android:textSize="18sp" />
 
-        <!-- Time is fixed width -->
+        <!-- Raw Recipe Input -->
         <EditText
-            android:id="@+id/inputTime"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="Secs"
-            android:background="@android:drawable/edit_text"
-            android:padding="10dp"
-            android:layout_marginEnd="8dp"/>
+            android:id="@+id/etRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:hint="Paste recipe steps here..."
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text" />
 
-        <!-- Button is wrap_content so it doesn't squash -->
-        <Button
-            android:id="@+id/btnAdd"
+        <!-- Serving Multiplier -->
+        <EditText
+            android:id="@+id/etMultiplier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Serving Multiplier (e.g. 2)"
+            android:inputType="numberDecimal" />
+
+        <!-- Metric Toggle -->
+        <Switch
+            android:id="@+id/switchMetric"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ADD"
-            android:minWidth="0dp"
-            android:paddingHorizontal="20dp"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"/>
-    </LinearLayout>
+            android:text="Convert to Ounces" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC"
-        android:layout_marginVertical="16dp"/>
-
-    <!-- MAIN CARD DISPLAY -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="6dp"
-        app:cardBackgroundColor="#FFFFFF"
-        android:layout_marginBottom="16dp">
-
-        <LinearLayout
+        <!-- Buttons -->
+        <Button
+            android:id="@+id/btnStart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="24dp">
-
-            <TextView
-                android:id="@+id/txtTimer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="--:--"
-                android:textSize="40sp"
-                android:textColor="#D32F2F"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
-
-            <TextView
-                android:id="@+id/txtDisplay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Waiting for Recipe..."
-                android:textAlignment="center"
-                android:textSize="26sp"
-                android:textColor="#212121"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- NAVIGATION BUTTONS (50/50 Split) -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+            android:layout_height="wrap_content"
+            android:text="Start Cooking" />
 
         <Button
-            android:id="@+id/btnPrev"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:text="PREVIOUS"
-            android:layout_marginEnd="6dp"
-            android:backgroundTint="#5C6BC0"/>
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Recipe" />
 
         <Button
-            android:id="@+id/btnNext"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:text="NEXT"
-            android:layout_marginStart="6dp"
-            android:backgroundTint="#5C6BC0"/>
+            android:id="@+id/btnLoad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Load Recipe" />
+
     </LinearLayout>
 
-    <!-- NOVELTY BUTTONS (50/50 Split) -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnRecover"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="OOPS (FIX)"
-            android:layout_marginEnd="6dp"
-            android:backgroundTint="#FF9800"/>
-
-        <Button
-            android:id="@+id/btnCombine"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="COMBINE"
-            android:layout_marginStart="6dp"
-            android:backgroundTint="#039BE5"/>
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
