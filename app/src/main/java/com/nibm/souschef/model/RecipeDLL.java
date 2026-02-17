@@ -14,6 +14,7 @@ public class RecipeDLL {
     }
 
     public void insertNode(String instruction) {
+
         StepNode newNode = new StepNode(instruction);
 
         if (head == null) {
@@ -37,6 +38,39 @@ public class RecipeDLL {
             currentNode = currentNode.prev;
         }
         return currentNode;
+    }
+
+    public void concatenateWithNext() {
+        if (currentNode == null || currentNode.next == null) return;
+
+        StepNode nodeToMerge = currentNode.next;
+
+        currentNode.instruction += " " + nodeToMerge.instruction;
+        currentNode.next = nodeToMerge.next;
+
+        if (nodeToMerge.next != null) {
+            nodeToMerge.next.prev = currentNode;
+        } else {
+            tail = currentNode;
+        }
+        size--;
+    }
+
+    public void concatenateWithPrev() {
+        if (currentNode == null || currentNode.prev == null) return;
+
+        StepNode nodeToMergeInto = currentNode.prev;
+
+        nodeToMergeInto.instruction += " " + currentNode.instruction;
+        nodeToMergeInto.next = currentNode.next;
+
+        if (currentNode.next != null) {
+            currentNode.next.prev = nodeToMergeInto;
+        } else {
+            tail = nodeToMergeInto;
+        }
+        currentNode = nodeToMergeInto;
+        size--;
     }
 
     public StepNode getHead() {
