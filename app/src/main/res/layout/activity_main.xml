@@ -7,7 +7,8 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="#F5F5F5"
-    tools:ignore="HardcodedText,Autofill,TextFields,ButtonStyle">
+    tools:ignore="HardcodedText,Autofill,TextFields,ButtonStyle"
+    android:id="@+id/main">
 
     <!-- HEADER -->
     <TextView
