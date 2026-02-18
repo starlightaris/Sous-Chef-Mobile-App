@@ -5,11 +5,13 @@ public class RecipeDLL {
     private StepNode tail;
     private StepNode currentNode;
     private int size;
+    private int currentIndex;
     public RecipeDLL() {
         this.head = null;
         this.tail = null;
         this.currentNode = null;
         this.size = 0;
+        this.currentIndex = 0;
     }
 
     public void insertNode(String instruction, int duration) {
@@ -18,16 +20,19 @@ public class RecipeDLL {
 
         if (head == null) {
             head = tail = currentNode = newNode;
+            currentIndex = 0;
         } else {
             tail.next = newNode;
             newNode.prev = tail;
             tail = newNode;
         }
+        size++;
     }
 
     public StepNode moveToNext() {
         if (currentNode != null && currentNode.next != null) {
             currentNode = currentNode.next;
+            currentIndex++;
         }
         return currentNode;
     }
@@ -35,6 +40,7 @@ public class RecipeDLL {
     public StepNode moveToPrev() {
         if (currentNode != null && currentNode.prev != null) {
             currentNode = currentNode.prev;
+            currentIndex--;
         }
         return currentNode;
     }
@@ -72,6 +78,25 @@ public class RecipeDLL {
         size--;
     }
 
+    public String peekNextInstruction() {
+        if (currentNode != null && currentNode.next != null)
+            return currentNode.next.instruction;
+        return "";
+    }
+
+    public String peekPrevInstruction() {
+        if (currentNode != null && currentNode.prev != null)
+            return currentNode.prev.instruction;
+        return "";
+    }
+
+    public String getCurrentInstruction() {
+        if (currentNode != null)
+            return currentNode.instruction;
+        return "";
+    }
+
+
     public StepNode getHead() {
         return head;
     }
@@ -91,4 +116,9 @@ public class RecipeDLL {
     public boolean isCurrentStepTimed() {
         return currentNode != null && currentNode.timerSeconds > 0;
     }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
 }
