@@ -22,11 +22,10 @@ public class Timer {
         this.running = false;
     }
 
-    public void startTimer(StepNode stepNode) {
+    public void startTimer(int duration) {
         stopTimer();
 
-        this.currentStep = stepNode;
-        this.remainingSeconds = stepNode.getDuration();
+        this.remainingSeconds = duration;
         this.running = true;
         this.paused = false;
 

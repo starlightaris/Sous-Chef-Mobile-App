@@ -14,7 +14,8 @@ import com.nibm.souschef.algorithm.Timer;
 
 public class NavigatorActivity extends AppCompatActivity {
 
-    TextView txtCurrent, txtPrev, txtNext, txtProgress, txtTimer;
+    TextView txtCurrent, txtPrev, txtNext, txtProgress;
+    EditText txtTimer;
     ProgressBar progressBar;
     Button btnNext, btnPrev, btnStartTimer;
     Timer timer;
@@ -35,21 +36,22 @@ public class NavigatorActivity extends AppCompatActivity {
         btnNext = findViewById(R.id.btnNext);
         btnPrev = findViewById(R.id.btnPrev);
         btnStartTimer = findViewById(R.id.btnStartTimer);
-
         dll = RecipeRepository.recipeDLL;
 
         timer = new Timer(new Timer.TimerListener() {
             @Override
             public void onTick(int remainingSeconds) {
                 runOnUiThread(() -> {
-                    txtTimer.setText("00:" + String.format("%02d", remainingSeconds));
+                    txtTimer.setEnabled(false);
+                    txtTimer.setText(String.valueOf(remainingSeconds));
                 });
             }
 
             @Override
             public void onFinish() {
                 runOnUiThread(() -> {
-                    txtTimer.setText("00:00");
+                    txtTimer.setEnabled(true);
+                    txtTimer.setText("0");
                     Toast.makeText(NavigatorActivity.this,
                             "Step Complete!", Toast.LENGTH_SHORT).show();
                 });
@@ -82,7 +84,18 @@ public class NavigatorActivity extends AppCompatActivity {
 
             if (timer.isRunning()) return;
 
-            timer.startTimer(dll.getCurrentNode());
+            String input = txtTimer.getText().toString().trim();
+
+            int seconds;
+            if (input.isEmpty()) {
+                seconds = 10;
+            } else {
+                seconds = Integer.parseInt(input);
+            }
+
+            if (seconds <= 0) seconds = 10;
+
+            timer.startTimer(seconds);
         });
     }
 
