@@ -1,7 +1,10 @@
 package com.nibm.souschef.ui;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,7 +62,6 @@ public class NavigatorActivity extends AppCompatActivity {
             updateUI();
         });
 
-
         btnPrev.setOnClickListener(v -> {
             dll.moveToPrev();
             updateUI();
@@ -69,31 +71,8 @@ public class NavigatorActivity extends AppCompatActivity {
 
             if (isTimerRunning) return;
 
-            // For demo: 10 second timer
-            int seconds = 10;
-
-            isTimerRunning = true;
-            btnNext.setEnabled(false); // 🔥 LOCK navigation
-
-            countDownTimer = new CountDownTimer(seconds * 1000, 1000) {
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    long remaining = millisUntilFinished / 1000;
-                    txtTimer.setText("00:" + String.format("%02d", remaining));
-                }
-
-                @Override
-                public void onFinish() {
-                    txtTimer.setText("00:00");
-                    isTimerRunning = false;
-                    btnNext.setEnabled(true); // 🔥 UNLOCK navigation
-                    Toast.makeText(NavigatorActivity.this,
-                            "Step Complete!", Toast.LENGTH_SHORT).show();
-                }
-            }.start();
+            showTimerDialog();
         });
-
     }
 
     private void updateUI() {
@@ -112,8 +91,86 @@ public class NavigatorActivity extends AppCompatActivity {
         progressBar.setMax(total);
         progressBar.setProgress(index);
 
-        // Optional: Disable buttons at edges
         btnPrev.setEnabled(dll.getCurrentIndex() > 0);
-        btnNext.setEnabled(dll.getCurrentIndex() < total - 1);
+
+        if (!isTimerRunning)
+            btnNext.setEnabled(dll.getCurrentIndex() < total - 1);
+    }
+
+    private void showTimerDialog() {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_timer, null);
+
+        EditText etHours = view.findViewById(R.id.etHours);
+        EditText etMinutes = view.findViewById(R.id.etMinutes);
+        EditText etSeconds = view.findViewById(R.id.etSeconds);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Set Timer")
+                .setView(view)
+                .setPositiveButton("Start", (dialog, which) -> {
+
+                    int hours = parseInt(etHours.getText().toString());
+                    int minutes = parseInt(etMinutes.getText().toString());
+                    int seconds = parseInt(etSeconds.getText().toString());
+
+                    int totalSeconds =
+                            hours * 3600 +
+                                    minutes * 60 +
+                                    seconds;
+
+                    if (totalSeconds > 0)
+                        startTimer(totalSeconds);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private int parseInt(String value) {
+
+        if (value == null || value.isEmpty())
+            return 0;
+
+        return Integer.parseInt(value);
+    }
+
+    private void startTimer(int totalSeconds) {
+
+        isTimerRunning = true;
+        btnNext.setEnabled(false);
+
+        countDownTimer = new CountDownTimer(totalSeconds * 1000L, 1000) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                int remaining = (int) (millisUntilFinished / 1000);
+
+                int hrs = remaining / 3600;
+                int mins = (remaining % 3600) / 60;
+                int secs = remaining % 60;
+
+                txtTimer.setText(
+                        String.format("%02d:%02d:%02d", hrs, mins, secs)
+                );
+            }
+
+            @Override
+            public void onFinish() {
+
+                txtTimer.setText("00:00:00");
+
+                isTimerRunning = false;
+
+                btnNext.setEnabled(
+                        dll.getCurrentIndex() < dll.getSize() - 1
+                );
+
+                Toast.makeText(NavigatorActivity.this,
+                        "Step Complete!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }.start();
     }
 }

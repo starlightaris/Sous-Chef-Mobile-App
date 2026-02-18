@@ -48,7 +48,9 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textOn="1x"
-                android:textOff="1x"/>
+                android:textOff="1x"
+                android:background="@drawable/toggle_selected"
+                android:textColor="@color/toggle_text"/>
 
             <ToggleButton
                 android:id="@+id/btn2x"
@@ -56,7 +58,9 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textOn="2x"
-                android:textOff="2x"/>
+                android:textOff="2x"
+                android:background="@drawable/toggle_selected"
+                android:textColor="@color/toggle_text"/>
 
             <ToggleButton
                 android:id="@+id/btn3x"
@@ -64,7 +68,9 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textOn="3x"
-                android:textOff="3x"/>
+                android:textOff="3x"
+                android:background="@drawable/toggle_selected"
+                android:textColor="@color/toggle_text"/>
         </LinearLayout>
 
         <!-- Unit System -->
@@ -86,7 +92,9 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textOn="UK"
-                android:textOff="UK"/>
+                android:textOff="UK"
+                android:background="@drawable/toggle_selected"
+                android:textColor="@color/toggle_text"/>
 
             <ToggleButton
                 android:id="@+id/btnUS"
@@ -94,7 +102,9 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textOn="US"
-                android:textOff="US"/>
+                android:textOff="US"
+                android:background="@drawable/toggle_selected"
+                android:textColor="@color/toggle_text"/>
         </LinearLayout>
 
         <!-- Action Buttons -->
