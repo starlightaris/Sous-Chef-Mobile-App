@@ -9,16 +9,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.nibm.souschef.R;
 import com.nibm.souschef.model.RecipeDLL;
 import com.nibm.souschef.model.RecipeRepository;
+import com.nibm.souschef.algorithm.Timer;
+
 
 public class NavigatorActivity extends AppCompatActivity {
 
     TextView txtCurrent, txtPrev, txtNext, txtProgress, txtTimer;
     ProgressBar progressBar;
     Button btnNext, btnPrev, btnStartTimer;
-
-    CountDownTimer countDownTimer;
-    boolean isTimerRunning = false;
-
+    Timer timer;
     RecipeDLL dll;
 
     @Override
@@ -39,6 +38,25 @@ public class NavigatorActivity extends AppCompatActivity {
 
         dll = RecipeRepository.recipeDLL;
 
+        timer = new Timer(new Timer.TimerListener() {
+            @Override
+            public void onTick(int remainingSeconds) {
+                runOnUiThread(() -> {
+                    txtTimer.setText("00:" + String.format("%02d", remainingSeconds));
+                });
+            }
+
+            @Override
+            public void onFinish() {
+                runOnUiThread(() -> {
+                    txtTimer.setText("00:00");
+                    Toast.makeText(NavigatorActivity.this,
+                            "Step Complete!", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+
+
         if (dll == null || dll.getSize() == 0) {
             Toast.makeText(this, "No recipe loaded", Toast.LENGTH_SHORT).show();
             finish();
@@ -48,52 +66,24 @@ public class NavigatorActivity extends AppCompatActivity {
         updateUI();
 
         btnNext.setOnClickListener(v -> {
-
-            if (isTimerRunning) {
-                Toast.makeText(this,
-                        "Timer is active!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
+            timer.stopTimer();
             dll.moveToNext();
             updateUI();
         });
 
 
         btnPrev.setOnClickListener(v -> {
+            timer.stopTimer();
             dll.moveToPrev();
             updateUI();
         });
 
         btnStartTimer.setOnClickListener(v -> {
 
-            if (isTimerRunning) return;
+            if (timer.isRunning()) return;
 
-            // For demo: 10 second timer
-            int seconds = 10;
-
-            isTimerRunning = true;
-            btnNext.setEnabled(false); // 🔥 LOCK navigation
-
-            countDownTimer = new CountDownTimer(seconds * 1000, 1000) {
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    long remaining = millisUntilFinished / 1000;
-                    txtTimer.setText("00:" + String.format("%02d", remaining));
-                }
-
-                @Override
-                public void onFinish() {
-                    txtTimer.setText("00:00");
-                    isTimerRunning = false;
-                    btnNext.setEnabled(true); // 🔥 UNLOCK navigation
-                    Toast.makeText(NavigatorActivity.this,
-                            "Step Complete!", Toast.LENGTH_SHORT).show();
-                }
-            }.start();
+            timer.startTimer(dll.getCurrentNode());
         });
-
     }
 
     private void updateUI() {
