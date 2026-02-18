@@ -21,6 +21,7 @@ public class NavigatorActivity extends AppCompatActivity {
     Button btnNext, btnPrev, btnStartTimer;
     CountDownTimer countDownTimer;
     MediaPlayer mediaPlayer;
+    boolean isAlarmPlaying = false;
     boolean isTimerRunning = false;
 
     RecipeDLL dll;
@@ -70,10 +71,16 @@ public class NavigatorActivity extends AppCompatActivity {
 
         btnStartTimer.setOnClickListener(v -> {
 
-            if (isTimerRunning) return;
+            if (isTimerRunning) {
 
-            showTimerDialog();
+                stopTimerAndAlarm();
+
+            } else {
+
+                showTimerDialog();
+            }
         });
+
     }
 
     private void updateUI() {
@@ -232,12 +239,39 @@ public class NavigatorActivity extends AppCompatActivity {
         }
     }
 
+    private void playAlarmLoop() {
+
+        try {
+
+            mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
+
+            if (mediaPlayer != null) {
+
+                mediaPlayer.setLooping(true);
+
+                mediaPlayer.start();
+
+                isAlarmPlaying = true;
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
 
 
     private void startTimer(int totalSeconds) {
 
         isTimerRunning = true;
+
         btnNext.setEnabled(false);
+
+        btnStartTimer.setText("STOP TIMER");
+        btnStartTimer.setBackgroundColor(
+                getResources().getColor(android.R.color.holo_red_dark)
+        );
 
         countDownTimer = new CountDownTimer(totalSeconds * 1000L, 1000) {
 
@@ -260,19 +294,41 @@ public class NavigatorActivity extends AppCompatActivity {
 
                 txtTimer.setText("00:00:00");
 
-                isTimerRunning = false;
-
-                btnNext.setEnabled(
-                        dll.getCurrentIndex() < dll.getSize() - 1
-                );
-
-                playAlarmSound();
-
-                Toast.makeText(NavigatorActivity.this,
-                        "Step Complete!",
-                        Toast.LENGTH_SHORT).show();
+                playAlarmLoop();
             }
-
         }.start();
     }
+
+    private void stopTimerAndAlarm() {
+
+        // Stop countdown
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+
+        // Stop alarm sound
+        if (mediaPlayer != null && isAlarmPlaying) {
+
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+
+            isAlarmPlaying = false;
+        }
+
+        isTimerRunning = false;
+
+        btnNext.setEnabled(
+                dll.getCurrentIndex() < dll.getSize() - 1
+        );
+
+        btnStartTimer.setText("START TIMER");
+
+        btnStartTimer.setBackgroundColor(
+                getResources().getColor(R.color.purple_500)
+        );
+    }
+
+
 }
