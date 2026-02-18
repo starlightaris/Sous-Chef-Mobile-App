@@ -1,6 +1,7 @@
 package com.nibm.souschef.ui;
 
 import android.app.AlertDialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -18,8 +19,8 @@ public class NavigatorActivity extends AppCompatActivity {
     TextView txtCurrent, txtPrev, txtNext, txtProgress, txtTimer;
     ProgressBar progressBar;
     Button btnNext, btnPrev, btnStartTimer;
-
     CountDownTimer countDownTimer;
+    MediaPlayer mediaPlayer;
     boolean isTimerRunning = false;
 
     RecipeDLL dll;
@@ -97,6 +98,44 @@ public class NavigatorActivity extends AppCompatActivity {
             btnNext.setEnabled(dll.getCurrentIndex() < total - 1);
     }
 
+    private int[] extractTimeFromText(String text) {
+
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+
+        text = text.toLowerCase();
+
+        java.util.regex.Matcher h =
+                java.util.regex.Pattern
+                        .compile("(\\d+)\\s*(hour|hr)")
+                        .matcher(text);
+
+        if (h.find())
+            hours = Integer.parseInt(h.group(1));
+
+
+        java.util.regex.Matcher m =
+                java.util.regex.Pattern
+                        .compile("(\\d+)\\s*(minute|min)")
+                        .matcher(text);
+
+        if (m.find())
+            minutes = Integer.parseInt(m.group(1));
+
+
+        java.util.regex.Matcher s =
+                java.util.regex.Pattern
+                        .compile("(\\d+)\\s*(second|sec)")
+                        .matcher(text);
+
+        if (s.find())
+            seconds = Integer.parseInt(s.group(1));
+
+
+        return new int[]{hours, minutes, seconds};
+    }
+
     private void showTimerDialog() {
 
         LayoutInflater inflater = getLayoutInflater();
@@ -106,21 +145,43 @@ public class NavigatorActivity extends AppCompatActivity {
         EditText etMinutes = view.findViewById(R.id.etMinutes);
         EditText etSeconds = view.findViewById(R.id.etSeconds);
 
+        // 🔥 AUTO FILL FROM STEP TEXT
+        String currentStep =
+                dll.getCurrentInstruction();
+
+        int[] time =
+                extractTimeFromText(currentStep);
+
+        if(time[0] > 0)
+            etHours.setText(String.valueOf(time[0]));
+
+        if(time[1] > 0)
+            etMinutes.setText(String.valueOf(time[1]));
+
+        if(time[2] > 0)
+            etSeconds.setText(String.valueOf(time[2]));
+
+
         new AlertDialog.Builder(this)
                 .setTitle("Set Timer")
                 .setView(view)
                 .setPositiveButton("Start", (dialog, which) -> {
 
-                    int hours = parseInt(etHours.getText().toString());
-                    int minutes = parseInt(etMinutes.getText().toString());
-                    int seconds = parseInt(etSeconds.getText().toString());
+                    int hours =
+                            parseInt(etHours.getText().toString());
+
+                    int minutes =
+                            parseInt(etMinutes.getText().toString());
+
+                    int seconds =
+                            parseInt(etSeconds.getText().toString());
 
                     int totalSeconds =
                             hours * 3600 +
                                     minutes * 60 +
                                     seconds;
 
-                    if (totalSeconds > 0)
+                    if(totalSeconds > 0)
                         startTimer(totalSeconds);
                 })
                 .setNegativeButton("Cancel", null)
@@ -134,6 +195,44 @@ public class NavigatorActivity extends AppCompatActivity {
 
         return Integer.parseInt(value);
     }
+
+    private void playAlarmSound() {
+
+        try {
+
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+            }
+
+            mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
+
+            if (mediaPlayer != null) {
+
+                mediaPlayer.setOnCompletionListener(mp -> {
+                    mp.release();
+                    mediaPlayer = null;
+                });
+
+                mediaPlayer.start();
+            }
+            else {
+                Toast.makeText(this,
+                        "Audio failed to load",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+
+            Toast.makeText(this,
+                    "Audio error",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     private void startTimer(int totalSeconds) {
 
@@ -167,10 +266,13 @@ public class NavigatorActivity extends AppCompatActivity {
                         dll.getCurrentIndex() < dll.getSize() - 1
                 );
 
+                playAlarmSound();
+
                 Toast.makeText(NavigatorActivity.this,
                         "Step Complete!",
                         Toast.LENGTH_SHORT).show();
             }
+
         }.start();
     }
 }
