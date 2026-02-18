@@ -38,11 +38,29 @@ public class RecipeListActivity extends AppCompatActivity {
         loadRecipes();
 
 
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titleList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this,
+                R.layout.recipe_row,
+                R.id.txtTitle,
+                titleList
+        ) {
+            @Override
+            public android.view.View getView(int position, android.view.View convertView, android.view.ViewGroup parent) {
+
+                android.view.View view = super.getView(position, convertView, parent);
+
+                Button btnDelete = view.findViewById(R.id.btnDelete);
+
+                btnDelete.setOnClickListener(v -> {
+                    deleteRecipe(position);
+                    notifyDataSetChanged();
+                });
+
+                return view;
+            }
+        };
 
         listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -95,6 +113,36 @@ public class RecipeListActivity extends AppCompatActivity {
         catch(Exception e){
             Toast.makeText(this, "Error loading",
                     Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void deleteRecipe(int position) {
+
+        try {
+            recipeList.remove(position);
+            titleList.remove(position);
+
+            JSONArray newArray = new JSONArray();
+
+            for (RecipeData data : recipeList) {
+
+                JSONObject obj = new JSONObject();
+                obj.put("title", data.title);
+                obj.put("recipe", data.recipe);
+                obj.put("multiplier", data.multiplier);
+                obj.put("metric", data.metric);
+
+                newArray.put(obj);
+            }
+
+            java.io.FileOutputStream fos = openFileOutput("recipes.json", MODE_PRIVATE);
+            fos.write(newArray.toString().getBytes());
+            fos.close();
+
+            Toast.makeText(this, "Recipe Deleted", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Delete Failed", Toast.LENGTH_SHORT).show();
         }
     }
 }
