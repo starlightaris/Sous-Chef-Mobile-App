@@ -1,7 +1,11 @@
 package com.nibm.souschef.ui;
 
+import android.app.AlertDialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +19,9 @@ public class NavigatorActivity extends AppCompatActivity {
     TextView txtCurrent, txtPrev, txtNext, txtProgress, txtTimer;
     ProgressBar progressBar;
     Button btnNext, btnPrev, btnStartTimer;
-
     CountDownTimer countDownTimer;
+    MediaPlayer mediaPlayer;
+    boolean isAlarmPlaying = false;
     boolean isTimerRunning = false;
 
     RecipeDLL dll;
@@ -59,7 +64,6 @@ public class NavigatorActivity extends AppCompatActivity {
             updateUI();
         });
 
-
         btnPrev.setOnClickListener(v -> {
             dll.moveToPrev();
             updateUI();
@@ -67,31 +71,14 @@ public class NavigatorActivity extends AppCompatActivity {
 
         btnStartTimer.setOnClickListener(v -> {
 
-            if (isTimerRunning) return;
+            if (isTimerRunning) {
 
-            // For demo: 10 second timer
-            int seconds = 10;
+                stopTimerAndAlarm();
 
-            isTimerRunning = true;
-            btnNext.setEnabled(false); // 🔥 LOCK navigation
+            } else {
 
-            countDownTimer = new CountDownTimer(seconds * 1000, 1000) {
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    long remaining = millisUntilFinished / 1000;
-                    txtTimer.setText("00:" + String.format("%02d", remaining));
-                }
-
-                @Override
-                public void onFinish() {
-                    txtTimer.setText("00:00");
-                    isTimerRunning = false;
-                    btnNext.setEnabled(true); // 🔥 UNLOCK navigation
-                    Toast.makeText(NavigatorActivity.this,
-                            "Step Complete!", Toast.LENGTH_SHORT).show();
-                }
-            }.start();
+                showTimerDialog();
+            }
         });
 
     }
@@ -112,8 +99,236 @@ public class NavigatorActivity extends AppCompatActivity {
         progressBar.setMax(total);
         progressBar.setProgress(index);
 
-        // Optional: Disable buttons at edges
         btnPrev.setEnabled(dll.getCurrentIndex() > 0);
-        btnNext.setEnabled(dll.getCurrentIndex() < total - 1);
+
+        if (!isTimerRunning)
+            btnNext.setEnabled(dll.getCurrentIndex() < total - 1);
     }
+
+    private int[] extractTimeFromText(String text) {
+
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+
+        text = text.toLowerCase();
+
+        java.util.regex.Matcher h =
+                java.util.regex.Pattern
+                        .compile("(\\d+)\\s*(hour|hr)")
+                        .matcher(text);
+
+        if (h.find())
+            hours = Integer.parseInt(h.group(1));
+
+
+        java.util.regex.Matcher m =
+                java.util.regex.Pattern
+                        .compile("(\\d+)\\s*(minute|min)")
+                        .matcher(text);
+
+        if (m.find())
+            minutes = Integer.parseInt(m.group(1));
+
+
+        java.util.regex.Matcher s =
+                java.util.regex.Pattern
+                        .compile("(\\d+)\\s*(second|sec)")
+                        .matcher(text);
+
+        if (s.find())
+            seconds = Integer.parseInt(s.group(1));
+
+
+        return new int[]{hours, minutes, seconds};
+    }
+
+    private void showTimerDialog() {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_timer, null);
+
+        EditText etHours = view.findViewById(R.id.etHours);
+        EditText etMinutes = view.findViewById(R.id.etMinutes);
+        EditText etSeconds = view.findViewById(R.id.etSeconds);
+
+        // 🔥 AUTO FILL FROM STEP TEXT
+        String currentStep =
+                dll.getCurrentInstruction();
+
+        int[] time =
+                extractTimeFromText(currentStep);
+
+        if(time[0] > 0)
+            etHours.setText(String.valueOf(time[0]));
+
+        if(time[1] > 0)
+            etMinutes.setText(String.valueOf(time[1]));
+
+        if(time[2] > 0)
+            etSeconds.setText(String.valueOf(time[2]));
+
+
+        new AlertDialog.Builder(this)
+                .setTitle("Set Timer")
+                .setView(view)
+                .setPositiveButton("Start", (dialog, which) -> {
+
+                    int hours =
+                            parseInt(etHours.getText().toString());
+
+                    int minutes =
+                            parseInt(etMinutes.getText().toString());
+
+                    int seconds =
+                            parseInt(etSeconds.getText().toString());
+
+                    int totalSeconds =
+                            hours * 3600 +
+                                    minutes * 60 +
+                                    seconds;
+
+                    if(totalSeconds > 0)
+                        startTimer(totalSeconds);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private int parseInt(String value) {
+
+        if (value == null || value.isEmpty())
+            return 0;
+
+        return Integer.parseInt(value);
+    }
+
+    private void playAlarmSound() {
+
+        try {
+
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+            }
+
+            mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
+
+            if (mediaPlayer != null) {
+
+                mediaPlayer.setOnCompletionListener(mp -> {
+                    mp.release();
+                    mediaPlayer = null;
+                });
+
+                mediaPlayer.start();
+            }
+            else {
+                Toast.makeText(this,
+                        "Audio failed to load",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+
+            Toast.makeText(this,
+                    "Audio error",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void playAlarmLoop() {
+
+        try {
+
+            mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
+
+            if (mediaPlayer != null) {
+
+                mediaPlayer.setLooping(true);
+
+                mediaPlayer.start();
+
+                isAlarmPlaying = true;
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void startTimer(int totalSeconds) {
+
+        isTimerRunning = true;
+
+        btnNext.setEnabled(false);
+
+        btnStartTimer.setText("STOP TIMER");
+        btnStartTimer.setBackgroundColor(
+                getResources().getColor(android.R.color.holo_red_dark)
+        );
+
+        countDownTimer = new CountDownTimer(totalSeconds * 1000L, 1000) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                int remaining = (int) (millisUntilFinished / 1000);
+
+                int hrs = remaining / 3600;
+                int mins = (remaining % 3600) / 60;
+                int secs = remaining % 60;
+
+                txtTimer.setText(
+                        String.format("%02d:%02d:%02d", hrs, mins, secs)
+                );
+            }
+
+            @Override
+            public void onFinish() {
+
+                txtTimer.setText("00:00:00");
+
+                playAlarmLoop();
+            }
+        }.start();
+    }
+
+    private void stopTimerAndAlarm() {
+
+        // Stop countdown
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+
+        // Stop alarm sound
+        if (mediaPlayer != null && isAlarmPlaying) {
+
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+
+            isAlarmPlaying = false;
+        }
+
+        isTimerRunning = false;
+
+        btnNext.setEnabled(
+                dll.getCurrentIndex() < dll.getSize() - 1
+        );
+
+        btnStartTimer.setText("START TIMER");
+
+        btnStartTimer.setBackgroundColor(
+                getResources().getColor(R.color.purple_500)
+        );
+    }
+
+
 }
