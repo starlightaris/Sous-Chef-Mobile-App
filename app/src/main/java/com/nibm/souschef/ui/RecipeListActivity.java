@@ -2,6 +2,7 @@ package com.nibm.souschef.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -93,35 +94,77 @@ public class RecipeListActivity extends AppCompatActivity
     // Swipe delete
     private void enableSwipeToDelete() {
 
-        ItemTouchHelper.SimpleCallback swipe =
-                new ItemTouchHelper.SimpleCallback(0,
-                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback callback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
                     @Override
-                    public boolean onMove(RecyclerView rv,
-                                          RecyclerView.ViewHolder vh,
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
                                           RecyclerView.ViewHolder target) {
                         return false;
                     }
 
                     @Override
-                    public void onSwiped(RecyclerView.ViewHolder holder,
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
                                          int direction) {
 
-                        int position = holder.getAdapterPosition();
+                        int position = viewHolder.getAdapterPosition();
 
                         recipeList.remove(position);
                         adapter.notifyItemRemoved(position);
-
                         saveRecipesToFile();
 
                         Toast.makeText(RecipeListActivity.this,
                                 "Recipe deleted",
                                 Toast.LENGTH_SHORT).show();
                     }
+                    @Override
+                    public void onChildDraw(android.graphics.Canvas c,
+                                            RecyclerView recyclerView,
+                                            RecyclerView.ViewHolder viewHolder,
+                                            float dX, float dY,
+                                            int actionState,
+                                            boolean isCurrentlyActive) {
+
+                        View itemView = viewHolder.itemView;
+
+                        android.graphics.Paint paint = new android.graphics.Paint();
+                        paint.setColor(android.graphics.Color.parseColor("#F44336")); // red
+
+                        // draw red background
+                        c.drawRect(
+                                itemView.getRight() + dX,
+                                itemView.getTop(),
+                                itemView.getRight(),
+                                itemView.getBottom(),
+                                paint
+                        );
+
+                        // draw trash icon
+                        android.graphics.drawable.Drawable icon =
+                                getResources().getDrawable(R.drawable.ic_delete);
+
+                        int iconMargin =
+                                (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+
+                        int iconTop = itemView.getTop() + iconMargin;
+                        int iconBottom = iconTop + icon.getIntrinsicHeight();
+
+                        int iconLeft =
+                                itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
+
+                        int iconRight =
+                                itemView.getRight() - iconMargin;
+
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                        icon.draw(c);
+
+                        super.onChildDraw(c, recyclerView, viewHolder,
+                                dX, dY, actionState, isCurrentlyActive);
+                    }
                 };
 
-        new ItemTouchHelper(swipe).attachToRecyclerView(recyclerView);
+        new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
     }
 
     // Save updated list back to JSON
