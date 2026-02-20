@@ -6,98 +6,159 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="24dp"
+    android:background="#F5F5F5"
     tools:context=".ui.NavigatorActivity">
 
-    <!-- Progress -->
     <TextView
         android:id="@+id/txtProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Step 1 of 1"
-        android:textSize="18sp"/>
+        android:textSize="14sp"
+        android:textColor="#49454F"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.04"
+        android:layout_marginBottom="8dp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:progressTint="#6750A4"
+        android:progressBackgroundTint="#E8DEF8" />
 
-
-    <!-- Current Step -->
     <TextView
         android:id="@+id/txtCurrent"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:text="Current step appears here"
-        android:textSize="24sp"
+        android:textSize="22sp"
+        android:textColor="#1C1B1F"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.01"
+        android:lineSpacingExtra="4dp"
         android:gravity="center"
-        android:padding="16dp"/>
+        android:padding="24dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
+        android:layout_marginBottom="16dp" />
 
-
-    <!-- Preview -->
     <TextView
         android:id="@+id/txtPrevious"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Previous"
-        android:textSize="14sp"/>
+        android:textSize="13sp"
+        android:textColor="#79747E"
+        android:fontFamily="sans-serif"
+        android:letterSpacing="0.02"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp" />
 
     <TextView
         android:id="@+id/txtNext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Next"
-        android:textSize="14sp"/>
+        android:textSize="13sp"
+        android:textColor="#79747E"
+        android:fontFamily="sans-serif"
+        android:letterSpacing="0.02"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="6dp"
+        android:layout_marginBottom="16dp" />
 
-
-    <!-- Timer -->
     <TextView
         android:id="@+id/txtTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00"
-        android:textSize="20sp"/>
+        android:textSize="28sp"
+        android:textColor="#6750A4"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.05"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/btnStartTimer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Timer"/>
+        android:layout_height="48dp"
+        android:text="Start Timer"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.04"
+        android:backgroundTint="#6750A4"
+        android:elevation="2dp"
+        android:layout_marginBottom="16dp" />
 
-
-    <!-- Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
 
         <Button
             android:id="@+id/btnPrev"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_height="48dp"
             android:text="Previous"
-            android:layout_height="wrap_content"/>
+            android:textSize="14sp"
+            android:textColor="#6750A4"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.04"
+            android:backgroundTint="#E8DEF8"
+            android:elevation="2dp"
+            android:layout_marginEnd="8dp" />
 
         <Button
             android:id="@+id/btnNext"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_height="48dp"
             android:text="Next"
-            android:layout_height="wrap_content"/>
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.04"
+            android:backgroundTint="#6750A4"
+            android:elevation="2dp"
+            android:layout_marginStart="8dp" />
 
     </LinearLayout>
 
     <Button
         android:id="@+id/btnMergeNext"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Merge With Next Step" />
+        android:layout_height="48dp"
+        android:text="Merge With Next Step"
+        android:textSize="13sp"
+        android:textColor="#49454F"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.03"
+        android:backgroundTint="#E7E0EC"
+        android:elevation="1dp"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/btnMergePrev"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Merge With Previous Step" />
+        android:layout_height="48dp"
+        android:text="Merge With Previous Step"
+        android:textSize="13sp"
+        android:textColor="#49454F"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.03"
+        android:backgroundTint="#E7E0EC"
+        android:elevation="1dp" />
 
 </LinearLayout>
