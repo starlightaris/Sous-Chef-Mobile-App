@@ -110,10 +110,10 @@ This ensures:
 - ⏱️ Multiple timers
 
 ## 👥 Team
-- @starlightaris
-- @Imaadh-Rushdee
-- @rizinthehub
-- @Shalin2110
+- [SENULYA. P. H. P](https://github.com/starlightaris)
+- [RUSHDEE. M. I](https://github.com/Imaadh-Rushdee)
+- [RIZNI. M. F. M](https://github.com/rizinthehub)
+- [HEENKENDA. S. J](https://github.com/Shalin2110)
 
 ## 📜 License
 
