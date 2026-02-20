@@ -14,4 +14,36 @@ public class RecipeData {
         this.multiplier = multiplier;
         this.metric = metric;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(String recipe) {
+        this.recipe = recipe;
+    }
+
+    public double getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(double multiplier) {
+        this.multiplier = multiplier;
+    }
+
+    public boolean isMetric() {
+        return metric;
+    }
+
+    public void setMetric(boolean metric) {
+        this.metric = metric;
+    }
 }
