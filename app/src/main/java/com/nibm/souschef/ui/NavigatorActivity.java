@@ -1,7 +1,6 @@
 package com.nibm.souschef.ui;
 
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.nibm.souschef.R;
 import com.nibm.souschef.model.RecipeDLL;
 import com.nibm.souschef.model.RecipeRepository;
-import com.nibm.souschef.algorithm.Timer;
 
 
 public class NavigatorActivity extends AppCompatActivity {
