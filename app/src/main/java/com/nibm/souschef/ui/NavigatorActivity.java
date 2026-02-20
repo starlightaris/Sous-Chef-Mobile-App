@@ -18,7 +18,7 @@ public class NavigatorActivity extends AppCompatActivity {
 
     TextView txtCurrent, txtPrev, txtNext, txtProgress, txtTimer;
     ProgressBar progressBar;
-    Button btnNext, btnPrev, btnStartTimer;
+    Button btnNext, btnPrev, btnStartTimer, btnMergeNext;
     CountDownTimer countDownTimer;
     MediaPlayer mediaPlayer;
     boolean isAlarmPlaying = false;
@@ -41,6 +41,7 @@ public class NavigatorActivity extends AppCompatActivity {
         btnNext = findViewById(R.id.btnNext);
         btnPrev = findViewById(R.id.btnPrev);
         btnStartTimer = findViewById(R.id.btnStartTimer);
+        btnMergeNext = findViewById(R.id.btnMergeNext);
 
         dll = RecipeRepository.recipeDLL;
 
@@ -79,6 +80,16 @@ public class NavigatorActivity extends AppCompatActivity {
 
                 showTimerDialog();
             }
+        });
+
+        btnMergeNext.setOnClickListener(v -> {
+
+            dll.concatenateWithNext();
+            updateUI();
+
+            Toast.makeText(this,
+                    "Steps merged",
+                    Toast.LENGTH_SHORT).show();
         });
 
     }
