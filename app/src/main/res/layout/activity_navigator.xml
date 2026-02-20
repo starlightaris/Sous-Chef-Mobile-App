@@ -88,4 +88,16 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/btnMergeNext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Merge With Next Step" />
+
+    <Button
+        android:id="@+id/btnMergePrev"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Merge With Previous Step" />
+
 </LinearLayout>
