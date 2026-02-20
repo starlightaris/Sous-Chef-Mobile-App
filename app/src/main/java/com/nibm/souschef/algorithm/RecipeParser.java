@@ -31,24 +31,42 @@ public class RecipeParser {
 
         StepNode node = dll.getHead();
 
-        while (node != null && node.next != null) {
+        while (node != null) {
 
-            String current = node.instruction.trim().toLowerCase();
-            String next = node.next.instruction.trim().toLowerCase();
+            // Merge with Next
+            if (node.next != null) {
 
-            // 🔥 Heuristic: merge if next starts with conjunction
-            if (next.startsWith("and ")
-                    || next.startsWith("then ")
-                    || next.startsWith("until ")
-                    || next.startsWith("for ")) {
+                String next = node.next.instruction.trim().toLowerCase();
 
-                dll.setCurrentNode(node);      // ⚠️ we’ll add this
-                dll.concatenateWithNext();
+                if (next.startsWith("and ")
+                        || next.startsWith("then ")
+                        || next.startsWith("until ")
+                        || next.startsWith("for ")) {
 
-                // do NOT advance — list changed
-            } else {
-                node = node.next;
+                    dll.setCurrentNode(node);
+                    dll.concatenateWithNext();
+                    continue;
+                }
             }
+
+            // Merge with Previous
+            if (node.prev != null) {
+
+                String current = node.instruction.trim().toLowerCase();
+
+                if (current.startsWith("and ")
+                        || current.startsWith("then ")
+                        || current.startsWith("until ")
+                        || current.startsWith("for ")) {
+
+                    dll.setCurrentNode(node);
+                    dll.concatenateWithPrev();
+                    node = dll.getCurrentNode();
+                    continue;
+                }
+            }
+
+            node = node.next;
         }
     }
 }
