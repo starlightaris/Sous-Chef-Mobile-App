@@ -75,7 +75,20 @@ public class RecipeDLL {
             tail = nodeToMergeInto;
         }
         currentNode = nodeToMergeInto;
+        currentIndex--;
         size--;
+    }
+
+    public void setCurrentNode(StepNode node) {
+        this.currentNode = node;
+
+        StepNode temp = head;
+        currentIndex = 0;
+
+        while (temp != null && temp != node) {
+            temp = temp.next;
+            currentIndex++;
+        }
     }
 
     public String peekNextInstruction() {
